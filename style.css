@@ -35,3 +35,5 @@ a { color:var(--accent); }
 #map { position:relative; }
 #open-full { position:absolute; left:10px; top:10px; z-index:100; background:#1f5fbf; color:#fff; padding:8px 14px; border-radius:4px; font-size:14px; font-weight:600; text-decoration:none; box-shadow:0 2px 6px rgba(0,0,0,.3); }
 #open-full:hover { background:#174a96; }
+
+.basis { color:#1f5fbf; }

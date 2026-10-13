@@ -147,7 +147,7 @@
       "<p><b>같은 자리 발주 이력 " + hist.length + '건</b></p><div class="hist">';
     hist.forEach((h, i) => {
       const prev = i > 0 ? (new Date(h.date) - new Date(hist[i - 1].date)) / 864e5 : null;
-      html += '<div class="item ' + (h.id === id ? "cur" : "") + '">' + (prev != null ? '<div class="gap">↑ ' + gapText(prev) + " 만에 재발주</div>" : "") + "<b>" + h.date + "</b> " + h.name + '<br><span class="meta">' + h.facility + "/" + (h.type || "-") + " · " + fmtWon(h.price) + " · 위치 " + h.grade + "</span><br>" +
+      html += '<div class="item ' + (h.id === id ? "cur" : "") + '">' + (prev != null ? '<div class="gap">↑ ' + gapText(prev) + " 만에 재발주</div>" : "") + "<b>" + h.date + "</b> " + h.name + '<br><span class="meta">' + h.facility + "/" + (h.type || "-") + " · " + fmtWon(h.price) + " · 위치 " + h.grade + (h.addr ? "<br>위치: " + h.addr : "") + (h.basis ? '<br><span class="basis">같은 자리 근거: ' + h.basis + "</span>" : "") + "</span><br>" +
         (h.url ? '<a href="' + h.url + '" target="_blank" rel="noopener">나라장터 공고 보기</a>' : "") + (h.doc ? ' · <a href="' + h.doc + '" target="_blank" rel="noopener">공고문 내려받기</a>' : "") + (h.id !== id ? ' · <a href="#" data-sel="' + h.id + '">지도에서 보기</a>' : "") + "</div>";
     });
     html += "</div>";
