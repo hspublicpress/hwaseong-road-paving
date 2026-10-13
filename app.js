@@ -25,6 +25,8 @@
   }
 
   async function boot() {
+    // 다른 사이트에 끼워 넣긴 상태(iframe)면 새 창에서 크게 보기 버튼을 보인다
+    try { if (window.top !== window.self) { const a = $("#open-full"); a.href = location.href; a.hidden = false; } } catch (_) { const a = $("#open-full"); a.hidden = false; }
     const sel = $("#city-select");
     (window.CITIES || [CITY]).forEach(c => { const o = document.createElement("option"); o.value = o.textContent = c; sel.appendChild(o); });
     sel.value = CITY; $("#city-title").textContent = CITY; document.title = CITY + " 포장 발주 주기 지도";
