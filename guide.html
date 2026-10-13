@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다른 지역에서 포장 발주 주기 지도 만들기</title>
+<style>
+  body { margin:0; font:15px/1.7 "Malgun Gothic","Apple SD Gothic Neo",sans-serif; color:#222; background:#fff; }
+  main { max-width:820px; margin:0 auto; padding:24px 16px 60px; }
+  h1 { font-size:24px; margin:0 0 6px; }
+  h2 { font-size:18px; margin:28px 0 8px; border-left:4px solid #1f5fbf; padding-left:10px; }
+  .lead { color:#555; margin:0 0 18px; }
+  ol li, ul li { margin:6px 0; }
+  code { background:#f3f5f9; padding:1px 5px; border-radius:3px; font-size:13px; }
+  pre { background:#f3f5f9; padding:10px 12px; overflow-x:auto; font-size:13px; }
+  table { border-collapse:collapse; width:100%; font-size:14px; }
+  th, td { border:1px solid #e3e3e3; padding:6px 8px; text-align:left; vertical-align:top; }
+  th { background:#f7f9fc; }
+  .note { background:#fff8e6; border:1px solid #f0d58c; padding:10px 12px; border-radius:4px; font-size:14px; }
+  a { color:#1f5fbf; }
+</style>
+</head>
+<body>
+<main>
+<h1>다른 지역에서 포장 발주 주기 지도 만들기</h1>
+<p class="lead">이 지도는 나라장터에 공개된 공사 발주 이력으로 "같은 자리가 얼마나 자주 다시 포장되는지"를 보여줍니다. 화성시로 만들었지만, 아래 순서를 따르면 다른 시·군도 같은 방식으로 볼 수 있습니다. 코드는 <a href="https://github.com/hspublicpress/hwaseong-road-paving" target="_blank" rel="noopener">GitHub 저장소</a>에 있습니다.</p>
+
+<h2>1. 어떤 자료를 쓰나</h2>
+<table>
+<tr><th>자료</th><th>어디서</th><th>무엇에 쓰나</th></tr>
+<tr><td>나라장터 입찰공고·낙찰 정보(공사)</td><td>공공데이터포털 "조달청_나라장터 입찰공고정보서비스", "낙찰정보서비스" (무료, 자동승인)</td><td>어느 기관이 언제 어떤 포장공사를 발주했는지, 공고문 첨부 링크</td></tr>
+<tr><td>공고문(hwp·pdf)</td><td>나라장터 공고 첨부</td><td>공사현장 지번, 연장(L), 면적(A), 구간 표기</td></tr>
+<tr><td>표준노드링크</td><td>국가교통정보센터(its.go.kr) 공개자료</td><td>도로 선형, 도로명, 교차로명</td></tr>
+<tr><td>행정동 경계</td><td>공개 행정동 경계 GeoJSON</td><td>읍면동 선택·집계</td></tr>
+<tr><td>네이버 지도·지오코딩</td><td>NAVER Cloud Platform Maps(무료 구간 있음)</td><td>지번 → 좌표, 지도 표시</td></tr>
+</table>
+
+<h2>2. 준비할 키</h2>
+<ol>
+<li><b>공공데이터포털 인증키</b> 1개. 위 두 서비스에 각각 "활용신청"을 하면 같은 키로 호출됩니다. 개발계정은 하루 1,000회까지라 10년치 수집에 하루면 충분합니다.</li>
+<li><b>NCP Maps</b>: 콘솔에서 Application을 만들고 Web Dynamic Map과 Geocoding을 켭니다. 서비스 URL에 지도를 올릴 주소(예: GitHub Pages 주소)를 등록해야 지도가 뜹니다.</li>
+</ol>
+
+<h2>3. 실행 순서</h2>
+<p>저장소의 <code>scripts/</code>를 시군 이름만 바꿔 순서대로 실행합니다. 모든 스크립트는 <code>--city 시군명</code>을 받습니다.</p>
+<pre>python scripts/01_fetch_g2b.py --city 수원시 --from 2016-01   # 나라장터 수집(낙찰·입찰공고)
+python scripts/02_repeat_roads.py --city 수원시               # 공고명 기준 반복 도로 1차 집계
+python scripts/03a_fetch_notices.py --city 수원시             # 공고문 첨부 다운로드
+python scripts/03b_extract_text.py --city 수원시              # 본문 추출
+python scripts/03c_clip_nodelink.py --city 수원시             # 표준노드링크를 시군 경계로 자르기
+python scripts/03d_parse_notices.py --city 수원시             # 지번·도로명·연장·면적 추출
+python scripts/04_geocode_segments.py --city 수원시           # 좌표·선형 만들기
+python scripts/05_intervals.py --city 수원시                  # 재발주 간격 계산, 웹 데이터 생성</pre>
+<p>끝나면 <code>web/</code> 폴더를 정적 호스팅(GitHub Pages 등)에 올리고, 상단 드롭다운에서 시군을 고르면 됩니다.</p>
+
+<h2>4. 지역마다 손봐야 하는 것</h2>
+<ul>
+<li><b>기관명</b>: 나라장터의 수요기관명이 "○○시"로 검색됩니다. 특례시·구 설치 등으로 기관명이 바뀐 적이 있으면 <code>scripts/common.py</code>의 별칭 목록에 추가합니다.</li>
+<li><b>공고명 키워드</b>: 지역마다 "덧씌우기", "포장도 보수", "보도블록" 등 쓰는 말이 다릅니다. 1차 집계 결과를 보고 <code>common.py</code>의 키워드와 제외어를 조정합니다.</li>
+<li><b>공고문 양식</b>: 지자체마다 "공사현장", "사업위치", "위치" 등 표기가 다릅니다. <code>03d_parse_notices.py</code>의 정규식을 공고문 몇 건을 열어 보고 맞춥니다.</li>
+<li><b>소액 공사</b>: 나라장터에 올라오지 않는 소액 수의계약은 시·군 홈페이지의 계약정보 공개에서 따로 받아야 합니다.</li>
+</ul>
+
+<h2>5. 결과를 읽을 때 주의</h2>
+<div class="note">
+<ul>
+<li>색은 "같은 자리에 다시 발주된 최소 간격"입니다. 위치 정확도 A(지번)만 간격 계산에 쓰고, 도로 전체·읍면동 단위로만 잡힌 건은 지도에 표시만 하고 간격은 계산하지 않습니다.</li>
+<li>짧은 간격이 곧 중복 포장은 아닙니다. 상하수도·가스·통신 굴착 뒤 복구, 1공구·2공구 분할, 부분 보수가 섞여 있으니 공고문 링크로 공사개요를 확인해야 합니다.</li>
+<li>발주일은 입찰공고일 기준입니다. 실제 시공 시점과는 수개월 차이가 날 수 있습니다.</li>
+</ul>
+</div>
+
+<h2>6. 도움이 필요하면</h2>
+<p>화성시민신문(<a href="mailto:hspublicpress@gmail.com">hspublicpress@gmail.com</a>)으로 연락하면 수집 스크립트 실행과 키 신청 과정을 안내해 드립니다. 다른 지역 언론과 시민단체의 활용을 환영합니다.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,33 @@
+:root { --bg:#fff; --fg:#222; --muted:#666; --line:#e3e3e3; --accent:#1f5fbf; }
+* { box-sizing:border-box; }
+body { margin:0; font:14px/1.5 "Malgun Gothic", "Apple SD Gothic Neo", sans-serif; color:var(--fg); background:var(--bg); }
+header { display:flex; flex-wrap:wrap; gap:10px; align-items:center; padding:8px 14px; border-bottom:1px solid var(--line); }
+header h1 { font-size:17px; margin:0 8px 0 0; }
+header select, header input[type=search] { padding:4px 6px; font-size:13px; }
+header label { font-size:13px; }
+#wrap { display:flex; height:calc(100vh - 50px); }
+#map { flex:1; min-width:0; }
+#panel { width:400px; overflow:auto; border-left:1px solid var(--line); padding:10px 12px; }
+#legend { display:flex; flex-wrap:wrap; gap:6px 12px; margin-bottom:8px; font-size:12px; }
+#legend span i { display:inline-block; width:14px; height:14px; border-radius:3px; vertical-align:-2px; margin-right:4px; }
+#stats { font-size:12px; color:var(--muted); margin-bottom:8px; }
+.row { padding:6px 4px; border-bottom:1px solid var(--line); cursor:pointer; }
+.row:hover { background:#f5f8ff; }
+.row b { font-weight:600; }
+.row small { color:var(--muted); }
+.tag { display:inline-block; padding:0 6px; border-radius:10px; font-size:11px; color:#fff; margin-right:4px; }
+#detail { border-top:2px solid var(--accent); padding-top:8px; margin-top:8px; }
+#detail h2 { font-size:15px; margin:0 0 6px; }
+#detail .back { float:right; font-size:12px; cursor:pointer; color:var(--accent); }
+.hist { position:relative; padding-left:16px; border-left:2px solid #ccc; margin:10px 0; }
+.hist .item { margin:0 0 12px; }
+.hist .item::before { content:""; position:absolute; left:-7px; width:12px; height:12px; border-radius:50%; background:#999; margin-top:4px; }
+.hist .item.cur::before { background:var(--accent); }
+.gap { font-size:12px; color:#b00020; font-weight:600; }
+.meta { font-size:12px; color:var(--muted); }
+a { color:var(--accent); }
+#note { font-size:11px; color:var(--muted); }
+#overlay-msg { position:fixed; left:50%; top:60px; transform:translateX(-50%); background:#fff; border:1px solid #c00; padding:10px 14px; z-index:9; max-width:600px; }
+@media (max-width: 900px) { #wrap { flex-direction:column; } #panel { width:auto; height:45vh; border-left:0; border-top:1px solid var(--line); } }
+
+#guide-link { font-size:13px; margin-left:auto; white-space:nowrap; }
