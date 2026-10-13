@@ -19,7 +19,7 @@
       const s = document.createElement("script");
       s.src = "https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=" + encodeURIComponent(cid);
       s.onload = res; s.onerror = () => rej(new Error("네이버 지도 스크립트 로드 실패"));
-      window.navermap_authFailure = () => showMsg("<b>네이버 지도 인증 실패</b><br>NCP 콘솔에서 Client ID 와 서비스 URL(현재 주소, 예: http://localhost:8001)을 확인하세요.");
+      window.navermap_authFailure = () => showMsg("<b>네이버 지도 인증 실패</b><br>NCP 콘솔 > Maps Application > Web 서비스 URL 에 현재 주소(" + location.origin + ")를 등록해야 지도가 표시됩니다.");
       document.head.appendChild(s);
     });
   }
